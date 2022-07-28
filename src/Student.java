@@ -233,7 +233,7 @@ public class Student extends JFrame {
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "SELECT firstName, lastName, middleInitial, suffix, program, department, yearLevel, section  FROM student WHERE studentID = ?";
+					String sql = "SELECT studentID, firstName, lastName, middleInitial, suffix, program, department, yearLevel, section FROM student WHERE studentID = ?";
 					
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
@@ -430,7 +430,8 @@ public class Student extends JFrame {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "UPDATE student SET firstName = ?, lastName = ?, middleInitial = ?, suffix = ?, program = ?, department = ?, yearLevel = ?, section = ? WHERE studentID = ?";
+					String sql = "UPDATE student SET firstName = ?, lastName = ?, middleInitial = ?, suffix = ?,"
+							+ " program = ?, department = ?, yearLevel = ?, section = ? WHERE studentID = ?";
 					
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
