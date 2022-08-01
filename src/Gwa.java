@@ -327,7 +327,7 @@ public class Gwa extends JFrame {
 		table = new JTable();
 		scrollPane_1.setViewportView(table);
 		table.setEnabled(false);
-		table.setFont(new Font("Arial", Font.PLAIN, 14));
+		table.setFont(new Font("Arial", Font.PLAIN, 14)); 	//Updated UI
 		table.setModel(new DefaultTableModel(
 				new Object[][] {
 				},
