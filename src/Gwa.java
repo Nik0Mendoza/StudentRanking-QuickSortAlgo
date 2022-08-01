@@ -7,35 +7,42 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
-import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
+import javax.swing.JTextArea;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import javax.swing.border.TitledBorder;
-import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.AbstractButton;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.KeyEvent;
+
 
 public class Gwa extends JFrame {
 	
@@ -70,47 +77,49 @@ public class Gwa extends JFrame {
 	ResultSet rs = null;
 	private JTable table;
 	private final JScrollPane scrollPane = new JScrollPane();
+	private JTextField txtYearLevel;
+	private JTextField txtSem;
 	
-	public void Student() {
+	public void Gwa() {
 		showTableData();
-		Student();
+		Gwa();
 	}
 	
 	public void showTableData() {
 		try {
-				con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root","");
-				String sql = "SELECT * FROM student";
-				pst = con.prepareStatement(sql);
-				rs = pst.executeQuery();
-				ResultSetMetaData stData = (ResultSetMetaData) rs.getMetaData(); 
-		
-				int q = stData.getColumnCount();
-				
-				DefaultTableModel RecordTable = (DefaultTableModel)table.getModel();
-			RecordTable.setRowCount(0);
+			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", ""); //database name
+			String sql = "SELECT * FROM student JOIN grade";
+			pst = con.prepareStatement(sql);
+			rs = pst.executeQuery();
+			ResultSetMetaData stData = (ResultSetMetaData) rs.getMetaData();
 			
-			while(rs.next()) {
-				Vector columnData = new Vector();
-				
-				for(int i = 1; i<=q; i++) {
-					columnData.add(rs.getString("studentID"));
-					columnData.add(rs.getString("firstName"));
-					columnData.add(rs.getString("lastName"));
-					columnData.add(rs.getString("middleInitial"));
-					columnData.add(rs.getString("suffix"));
-					columnData.add(rs.getString("program"));
-					columnData.add(rs.getString("department"));
-					columnData.add(rs.getString("yearLevel"));
-					columnData.add(rs.getString("section"));
-					columnData.add(rs.getString("gwa"));
-					
-				}
-				RecordTable.addRow(columnData);
-			}
-			}
-			catch (Exception ex) {
-				JOptionPane.showMessageDialog(null, ex);
-			}
+			int q = stData.getColumnCount();
+            
+			DefaultTableModel RecordTable = (DefaultTableModel)table.getModel();
+                    RecordTable.setRowCount(0);
+                    
+            while(rs.next()){
+                Vector columnData = new Vector();
+                
+                for (int i = 1; i <= q; i++){
+                    columnData.add(rs.getString("studentID"));
+                    columnData.add(rs.getString("firstName"));
+                    columnData.add(rs.getString("lastName"));
+                    columnData.add(rs.getString("middleInitial"));
+                    columnData.add(rs.getString("suffix"));
+                    columnData.add(rs.getString("program"));
+                    columnData.add(rs.getString("department"));
+                	columnData.add(rs.getString("yearLevel"));
+                    columnData.add(rs.getString("section"));
+                    columnData.add(rs.getString("gwa"));
+                    columnData.add(rs.getString("lister"));
+                }
+                RecordTable.addRow(columnData);		
+		}
+		}
+		catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, ex);
+		}
 	}
 	
 	public Gwa() {
@@ -155,26 +164,30 @@ public class Gwa extends JFrame {
 		txtStudID = new JTextField();
 		txtStudID.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				try {
-					String sql = "SELECT firstName, lastName, middleInitial, suffix, program, department, yearLevel, section = ?";
-					
-					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root","");
-					pst = con.prepareStatement(sql);
-					pst.setString(1, txtStudID.getText());
-					
-					ResultSet rs = pst.executeQuery();
-					if(rs.next()==false) {
-						JOptionPane.showMessageDialog(null, "Record not found!");
-					}else{
-						String gwa = rs.getString(1);
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					try {
+						String sql = "SELECT student.studentID, firstName, lastName, middleInitial, suffix, program, department, yearLevel, section, gwa FROM student JOIN grade ON student.studentID = grade.studentID WHERE student.studentID = ?";
 						
-						txtGwa.setText(gwa);
-						txtStudID.requestFocus();
-						showTableData();
+						con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
+						pst = con.prepareStatement(sql);
+						pst.setString(1, txtStudID.getText());
+						
+						ResultSet rs = pst.executeQuery();
+						
+						if(rs.next()==false) {
+							JOptionPane.showMessageDialog(null, "Record not found!");
+						}else{
+							String gwa = rs.getString(1);
+							
+							txtGwa.setText(gwa);
+							txtStudID.requestFocus();
+							showTableData();
 						}
-						}catch (SQLException e1) {
+						}
+						catch (SQLException e1) {
 							e1.printStackTrace();
 						}
+				}
 			}
 		});
 		txtStudID.setFont(new Font("Tahoma", Font.PLAIN, 21));
@@ -183,12 +196,13 @@ public class Gwa extends JFrame {
 		paneSearch.add(txtStudID);
 		
 		JButton btnSearch = new JButton("Search");
-		btnSearch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnSearch.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 				try {
-					String sql = "SELECT gwa = ?";
-					
-					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root","");
+					String sql = "SELECT student.studentID, firstName, lastName, middleInitial, suffix, program, department, yearLevel, section, gwa FROM student JOIN grade ON student.studentID = grade.studentID WHERE student.studentID = ?";
+										
+					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
 					pst.setString(1, txtStudID.getText());
 					
@@ -196,9 +210,6 @@ public class Gwa extends JFrame {
 					
 					if(rs.next()==false) {
 						JOptionPane.showMessageDialog(null, "Record not found!");
-						
-						txtGwa.setText("");
-						txtStudID.requestFocus();
 					}else{
 						String gwa = rs.getString(1);
 						
@@ -206,9 +217,11 @@ public class Gwa extends JFrame {
 						txtStudID.requestFocus();
 						showTableData();
 					}
-					}catch(SQLException e1) {
+					}
+					catch (SQLException e1) {
 						e1.printStackTrace();
 					}
+			}
 			}
 		});
 		btnSearch.setForeground(Color.WHITE);
@@ -219,30 +232,52 @@ public class Gwa extends JFrame {
 		
 		JPanel paneGwa = new JPanel();
 		paneGwa.setLayout(null);
-		paneGwa.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Input GWA", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		paneGwa.setBounds(10, 363, 207, 55);
+		paneGwa.setBorder(null);
+		paneGwa.setBounds(10, 363, 263, 132);
 		panel.add(paneGwa);
 		
 		JLabel lblGwa = new JLabel("GWA:");
 		lblGwa.setFont(new Font("Arial", Font.PLAIN, 22));
-		lblGwa.setBounds(10, 11, 69, 34);
+		lblGwa.setBounds(10, 88, 69, 34);
 		paneGwa.add(lblGwa);
 		
 		txtGwa = new JTextField();
 		txtGwa.setFont(new Font("Tahoma", Font.PLAIN, 21));
 		txtGwa.setColumns(10);
-		txtGwa.setBounds(75, 14, 122, 28);
+		txtGwa.setBounds(121, 90, 122, 28);
 		paneGwa.add(txtGwa);
 		
-		JButton btnCreate = new JButton("Save");
+		JLabel lblSemester = new JLabel("Semester:");
+		lblSemester.setFont(new Font("Arial", Font.PLAIN, 22));
+		lblSemester.setBounds(10, 50, 102, 34);
+		paneGwa.add(lblSemester);
+		
+		txtYearLevel = new JTextField();
+		txtYearLevel.setFont(new Font("Tahoma", Font.PLAIN, 21));
+		txtYearLevel.setColumns(10);
+		txtYearLevel.setBounds(121, 12, 122, 28);
+		paneGwa.add(txtYearLevel);
+		
+		JLabel lblYearLevel = new JLabel("Year Level:");
+		lblYearLevel.setFont(new Font("Arial", Font.PLAIN, 22));
+		lblYearLevel.setBounds(10, 10, 122, 34);
+		paneGwa.add(lblYearLevel);
+		
+		txtSem = new JTextField();
+		txtSem.setFont(new Font("Tahoma", Font.PLAIN, 21));
+		txtSem.setColumns(10);
+		txtSem.setBounds(121, 50, 122, 28);
+		paneGwa.add(txtSem);
+		
+		JButton btnCreate = new JButton("Insert");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "INSERT INTO student"
+					String sql = "INSERT INTO grade"
 							+ "(gwa)"
 							+ "VALUES (?)";
 					
-					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root","");
+					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
 					pst.setString(1, txtGwa.getText());
 					pst.executeUpdate();
@@ -255,14 +290,14 @@ public class Gwa extends JFrame {
 					showTableData();
 			}
 		});
-		btnCreate.setBounds(227, 376, 139, 35);
+		btnCreate.setBounds(283, 392, 139, 35);
 		panel.add(btnCreate);
 		btnCreate.setForeground(Color.WHITE);
 		btnCreate.setFont(new Font("Arial", Font.BOLD, 25));
 		btnCreate.setBackground(new Color(128, 0, 0));
 		
 		JButton btnUpdate = new JButton("Update");
-		btnUpdate.setBounds(382, 376, 139, 35);
+		btnUpdate.setBounds(283, 437, 139, 35);
 		panel.add(btnUpdate);
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -285,31 +320,6 @@ public class Gwa extends JFrame {
 		btnUpdate.setFont(new Font("Arial", Font.BOLD, 25));
 		btnUpdate.setBackground(new Color(128, 0, 0));
 		
-		JButton btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String sql = "DELETE FROM student WHERE studentID = ?";
-					
-					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root","");
-					pst = con.prepareStatement(sql);
-					pst.setString(1, txtStudID.getText());
-					pst.executeUpdate();
-					JOptionPane.showMessageDialog(null, "Record deleted successfully!");
-				}catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-				txtGwa.setText("");
-				txtStudID.requestFocus();
-				showTableData();
-			}
-		});
-		btnDelete.setBounds(540, 376, 139, 35);
-		panel.add(btnDelete);
-		btnDelete.setForeground(Color.WHITE);
-		btnDelete.setFont(new Font("Arial", Font.BOLD, 25));
-		btnDelete.setBackground(new Color(128, 0, 0));
-		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(10, 140, 1180, 213);
 		panel.add(scrollPane_1);
@@ -319,19 +329,19 @@ public class Gwa extends JFrame {
 		table.setEnabled(false);
 		table.setFont(new Font("Arial", Font.PLAIN, 14));
 		table.setModel(new DefaultTableModel(
-				new Object [][] {
+				new Object[][] {
 				},
 				new String[] {
-						"Student ID", "First Name", "Last Name", "MI.", "Suffix", "Program", "Department", "Year Level", "Section","GWA" 
+					"Student_ID", "First_Name", "Last_Name", "M.I", "Suffix", "Program", "Department", "Year_Level", "Section", "GWA", "Academic"
 				}
-				) {
-					Class[] columnTypes = new Class[] {
-						String.class, String.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class, Integer.class
-					};
-					public Class getColumnClass(int columnIndex) {
-						return columnTypes[columnIndex];
-					}
-		});
+			) {
+				Class[] columnTypes = new Class[] {
+					String.class, String.class, String.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class, Float.class, String.class
+				};
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+			});
 		
 		JLabel lblIconLogo = new JLabel("");
 		lblIconLogo.setHorizontalAlignment(SwingConstants.CENTER);
