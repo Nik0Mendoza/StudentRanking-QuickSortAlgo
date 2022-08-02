@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
+import java.sql.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JComboBox;
@@ -71,14 +71,15 @@ public class Gwa extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtStudID;
 	private JTextField txtGwa;
+	private JTextField txtYearLevel;
+	private JTextField txtSem;
 
 	Connection con = null;
 	PreparedStatement pst = null;
 	ResultSet rs = null;
 	private JTable table;
 	private final JScrollPane scrollPane = new JScrollPane();
-	private JTextField txtYearLevel;
-	private JTextField txtSem;
+	
 	
 	public void Gwa() {
 		showTableData();
@@ -88,7 +89,7 @@ public class Gwa extends JFrame {
 	public void showTableData() {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", ""); //database name
-			String sql = "SELECT * FROM student JOIN grade";
+			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix ,year.yearDesc, semester.semDesc, grade.gwa FROM student, program, year, semester, grade  WHERE student.studentID = grade.studentID AND student.programID = program.programID AND student.yearID = year.yearID AND grade.semID = semester.semID;";
 			pst = con.prepareStatement(sql);
 			rs = pst.executeQuery();
 			ResultSetMetaData stData = (ResultSetMetaData) rs.getMetaData();
@@ -103,16 +104,14 @@ public class Gwa extends JFrame {
                 
                 for (int i = 1; i <= q; i++){
                     columnData.add(rs.getString("studentID"));
-                    columnData.add(rs.getString("firstName"));
-                    columnData.add(rs.getString("lastName"));
-                    columnData.add(rs.getString("middleInitial"));
-                    columnData.add(rs.getString("suffix"));
-                    columnData.add(rs.getString("program"));
-                    columnData.add(rs.getString("department"));
-                	columnData.add(rs.getString("yearLevel"));
-                    columnData.add(rs.getString("section"));
-                    columnData.add(rs.getString("gwa"));
-                    columnData.add(rs.getString("lister"));
+					columnData.add(rs.getString("programDesc"));
+					columnData.add(rs.getString("lastName"));
+					columnData.add(rs.getString("firstName"));
+					columnData.add(rs.getString("middleInitial"));
+					columnData.add(rs.getString("suffix"));
+					columnData.add(rs.getString("yearDesc"));
+					columnData.add(rs.getString("semDesc"));
+					columnData.add(rs.getString("gwa"));
                 }
                 RecordTable.addRow(columnData);		
 		}
@@ -165,8 +164,9 @@ public class Gwa extends JFrame {
 		txtStudID.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-					try {
-						String sql = "SELECT student.studentID, firstName, lastName, middleInitial, suffix, program, department, yearLevel, section, gwa FROM student JOIN grade ON student.studentID = grade.studentID WHERE student.studentID = ?";
+					showTableData();
+					/*try {
+						String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix ,year.yearDesc, section.sectionDesc, semester.semDesc, grade.gwa FROM student, program, year, section, semester, grade WHERE student.programID = program.programID AND student.yearID = year.yearID AND student.sectionID = section.sectionID AND grade.semID = semester.semID AND student.studentID = ?;";
 						
 						con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 						pst = con.prepareStatement(sql);
@@ -177,16 +177,25 @@ public class Gwa extends JFrame {
 						if(rs.next()==false) {
 							JOptionPane.showMessageDialog(null, "Record not found!");
 						}else{
-							String gwa = rs.getString(1);
-							
-							txtGwa.setText(gwa);
+							/*String studentID = rs.getString(1);
+							String program = rs.getString(2);
+							String lastName = rs.getString(3);
+							String firstName = rs.getString(4);
+							String middleInitial = rs.getString(5);
+							String suffix = rs.getString(6);
+							String yearLevel = rs.getString(7);
+							String section = rs.getString(8);
+							String semester = rs.getString(9);
+							String gwa = rs.getString(10);
+
+					
 							txtStudID.requestFocus();
 							showTableData();
 						}
 						}
 						catch (SQLException e1) {
 							e1.printStackTrace();
-						}
+						} */
 				}
 			}
 		});
@@ -196,32 +205,9 @@ public class Gwa extends JFrame {
 		paneSearch.add(txtStudID);
 		
 		JButton btnSearch = new JButton("Search");
-		btnSearch.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-				try {
-					String sql = "SELECT student.studentID, firstName, lastName, middleInitial, suffix, program, department, yearLevel, section, gwa FROM student JOIN grade ON student.studentID = grade.studentID WHERE student.studentID = ?";
-										
-					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
-					pst = con.prepareStatement(sql);
-					pst.setString(1, txtStudID.getText());
-					
-					ResultSet rs = pst.executeQuery();
-					
-					if(rs.next()==false) {
-						JOptionPane.showMessageDialog(null, "Record not found!");
-					}else{
-						String gwa = rs.getString(1);
-						
-						txtGwa.setText(gwa);
-						txtStudID.requestFocus();
-						showTableData();
-					}
-					}
-					catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-			}
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showTableData();
 			}
 		});
 		btnSearch.setForeground(Color.WHITE);
@@ -269,13 +255,11 @@ public class Gwa extends JFrame {
 		txtSem.setBounds(121, 50, 122, 28);
 		paneGwa.add(txtSem);
 		
-		JButton btnCreate = new JButton("Insert");
-		btnCreate.addActionListener(new ActionListener() {
+		JButton btnInsert = new JButton("Insert");
+		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "INSERT INTO grade"
-							+ "(gwa)"
-							+ "VALUES (?)";
+					String sql = "INSERT INTO grade (studentID, yearID, semID, gwa, listerID) VALUES (?);";
 					
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
@@ -290,11 +274,11 @@ public class Gwa extends JFrame {
 					showTableData();
 			}
 		});
-		btnCreate.setBounds(283, 392, 139, 35);
-		panel.add(btnCreate);
-		btnCreate.setForeground(Color.WHITE);
-		btnCreate.setFont(new Font("Arial", Font.BOLD, 25));
-		btnCreate.setBackground(new Color(128, 0, 0));
+		btnInsert.setBounds(283, 392, 139, 35);
+		panel.add(btnInsert);
+		btnInsert.setForeground(Color.WHITE);
+		btnInsert.setFont(new Font("Arial", Font.BOLD, 25));
+		btnInsert.setBackground(new Color(128, 0, 0));
 		
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.setBounds(283, 437, 139, 35);
@@ -332,11 +316,11 @@ public class Gwa extends JFrame {
 				new Object[][] {
 				},
 				new String[] {
-					"Student_ID", "First_Name", "Last_Name", "M.I", "Suffix", "Program", "Department", "Year_Level", "Section", "GWA", "Academic"
+					"Student ID", "Program", "Last Name", "First Name", "MI", "Suffix", "Year Level", "Semester", "GWA"
 				}
 			) {
 				Class[] columnTypes = new Class[] {
-					String.class, String.class, String.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class, Float.class, String.class
+					String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class
 				};
 				public Class getColumnClass(int columnIndex) {
 					return columnTypes[columnIndex];
