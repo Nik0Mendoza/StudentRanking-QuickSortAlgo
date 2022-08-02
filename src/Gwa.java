@@ -1,4 +1,3 @@
-
 import java.awt.EventQueue;
 import java.awt.Image;
 
@@ -295,15 +294,69 @@ public class Gwa extends JFrame {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "UPDATE student SET gwa = ? WHERE studentID = ?";
+					String sql = "UPDATE grade SET gwa = ?, listerID =? WHERE studentID = ? AND yearID = ? AND semID = ?;";
 
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", "");
 					pst = con.prepareStatement(sql);
+
+					String sql2 = "SELECT yearDesc, yearID FROM year;";
+					pst2 = con.prepareStatement(sql2);
+					ResultSet rs2 = pst2.executeQuery();
+					String year = txtYearLevel.getText();
+					while (rs2.next()) {
+						if (year.equals(rs2.getString(1))) {
+							year = rs2.getString(2);
+							break;
+						}
+						break;
+					}
+
+					String sql3 = "SELECT semID, semDesc FROM semester;";
+					pst3 = con.prepareStatement(sql3);
+					ResultSet rs3 = pst3.executeQuery();
+					String semester = txtSem.getText();
+					while (rs3.next()) {
+						if (semester.equals(rs3.getString(2))) {
+							semester = rs3.getString(1);
+							break;
+						}
+						break;
+					}
+
+					String sql4 = "SELECT gwa FROM GRADE WHERE studentID = ? AND yearID = ? and semID = ?;";
+					pst4 = con.prepareStatement(sql4);
+					pst4.setString(1, txtStudID.getText());
+					pst4.setString(2, txtYearLevel.getText());
+					pst4.setString(3, txtSem.getText());
+					ResultSet rs4 = pst4.executeQuery();
+					float gwa = 0;
+					int listerID = 0;
+					while (rs4.next()){
+						gwa = rs4.getFloat(1);
+						if (gwa >= 1 && gwa <= 1.50) {
+							listerID = 2;
+						} else if (gwa >= 1.51 && gwa <= 1.75) {
+							listerID = 3;
+						} else {
+							listerID = 1;
+						}
+						break;
+					}
+
 					pst.setString(1, txtGwa.getText());
+					pst.setInt(2, listerID);
+					pst.setString(3, txtStudID.getText());
+					pst.setString(4, year);
+					pst.setString(5, semester);
+					
+					
+					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record updated successfully!");
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
+				txtYearLevel.setText("");
+				txtSem.setText("");
 				txtGwa.setText("");
 				txtStudID.requestFocus();
 				showTableData();
