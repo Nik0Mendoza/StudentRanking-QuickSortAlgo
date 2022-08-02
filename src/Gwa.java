@@ -262,7 +262,6 @@ public class Gwa extends JFrame {
 						} else {
 							listerID = 1;
 						}
-						break;
 					}
 
 					pst.setString(1, txtStudID.getText());
@@ -340,7 +339,6 @@ public class Gwa extends JFrame {
 						} else {
 							listerID = 1;
 						}
-						break;
 					}
 
 					pst.setString(1, txtGwa.getText());
@@ -348,8 +346,6 @@ public class Gwa extends JFrame {
 					pst.setString(3, txtStudID.getText());
 					pst.setString(4, year);
 					pst.setString(5, semester);
-					
-					
 					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record updated successfully!");
 				} catch (SQLException e1) {
