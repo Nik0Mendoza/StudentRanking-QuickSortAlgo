@@ -1,21 +1,15 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Image;
-import java.sql.*;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.JTextPane;
 import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class Menu extends JFrame {
 	
@@ -24,7 +18,6 @@ public class Menu extends JFrame {
 	private Image img_student = new ImageIcon(Login.class.getResource("res/STUDENT.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	private Image img_gwa = new ImageIcon(Login.class.getResource("res/GRADES.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	private Image img_rank = new ImageIcon(Login.class.getResource("res/RANKING.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-	private Image img_report = new ImageIcon(Login.class.getResource("res/REPORT.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	private Image img_out = new ImageIcon(Login.class.getResource("res/LOGOUT.png")).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	
 	private JPanel contentPane;
@@ -157,32 +150,7 @@ public class Menu extends JFrame {
 		lblIconRank.setBounds(10, 0, 61, 72);
 		lblIconRank.setIcon(new ImageIcon(img_rank));
 		paneRanking.add(lblIconRank);
-		
-		JPanel paneReport = new JPanel();
-		paneReport.addMouseListener(new PanelButtonMouseAdapter(paneReport){
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Report frameReport = new Report();
-				frameReport.setVisible(true);
-				dispose();
-			}
-		});
-		paneReport.setBorder(null);
-		paneReport.setBackground(new Color(211, 211, 211));
-		paneReport.setBounds(0, 502, 247, 72);
-		panel.add(paneReport);
-		paneReport.setLayout(null);
-		
-		JLabel lblNewLabel_3 = new JLabel("Report");
-		lblNewLabel_3.setFont(new Font("Dialog", Font.BOLD, 25));
-		lblNewLabel_3.setBounds(84, 10, 153, 51);
-		paneReport.add(lblNewLabel_3);
-		
-		JLabel lblIconReport = new JLabel("");
-		lblIconReport.setHorizontalAlignment(SwingConstants.CENTER);
-		lblIconReport.setBounds(10, 0, 64, 72);
-		lblIconReport.setIcon(new ImageIcon(img_report));
-		paneReport.add(lblIconReport);
+
 		
 		JPanel paneLogout = new JPanel();
 		paneLogout.addMouseListener(new PanelButtonMouseAdapter(paneLogout) {
@@ -195,7 +163,7 @@ public class Menu extends JFrame {
 		});
 		paneLogout.setBorder(null);
 		paneLogout.setBackground(new Color(211, 211, 211));
-		paneLogout.setBounds(0, 571, 247, 72);
+		paneLogout.setBounds(0, 501, 247, 72);
 		panel.add(paneLogout);
 		paneLogout.setLayout(null);
 		
@@ -248,4 +216,3 @@ public class Menu extends JFrame {
 			}
 		}
 }
-
