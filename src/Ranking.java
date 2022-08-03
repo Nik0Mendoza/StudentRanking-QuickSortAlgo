@@ -85,13 +85,13 @@ public class Ranking extends JFrame {
 
 		while (rs.next()) {
 			StudentGrade ranking = new StudentGrade(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
-					rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getFloat(9));
+					rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDouble(9));
 			rankingList.add(ranking);
 		}
 
 		Collections.sort(rankingList, new Comparator<StudentGrade>() {
 			public int compare(StudentGrade sg1, StudentGrade sg2) {
-				return Float.valueOf(sg1.gwa).compareTo(sg2.gwa);
+				return Double.valueOf(sg1.gwa).compareTo(sg2.gwa);
 			}
 		});
 		return rankingList;
@@ -181,7 +181,7 @@ public class Ranking extends JFrame {
 				}) {
 			Class[] columnTypes = new Class[] {
 					String.class, String.class, String.class, String.class, String.class, String.class, String.class,
-					String.class, Float.class
+					String.class, Double.class
 			};
 
 			public Class getColumnClass(int columnIndex) {
