@@ -1,5 +1,3 @@
-import java.util.Comparator;
-
 public class StudentGrade {
 
     String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, sectionDesc;
@@ -56,4 +54,5 @@ public class StudentGrade {
        public String toString() {
             return (this.getstudentID()+this.getprogramDesc()+this.getlastName()+this.getfirstName()+this.getmiddleInitial()+this.getsuffix()+this.getyearDesc()+this.getsectionDesc()+this.getgwa());
        }
+
 }
