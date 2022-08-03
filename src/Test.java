@@ -47,6 +47,7 @@ public class Test {
 			for (int i = 0; i < count; i++){
 				rankings[i] = new StudentGrade(rs4.getString(1), rs4.getString(2), rs4.getString(3), rs4.getString(4), rs4.getString(5), rs4.getString(6), rs4.getString(7), rs4.getString(8),rs4.getFloat(9));
 				System.out.println((rankings[i].studentID + " " + rankings[i].programDesc + " " + rankings[i].lastName+ " " + rankings[i].firstName+ " " + rankings[i].middleInitial+ " " + rankings[i].suffix+ " " + rankings[i].yearDesc + " " + rankings[i].sectionDesc + " " + rankings[i].gwa));
+				break;
 			}
 		  }
 		 
