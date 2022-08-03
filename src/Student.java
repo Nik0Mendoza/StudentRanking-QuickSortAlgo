@@ -1,6 +1,5 @@
 import java.awt.EventQueue;
 import java.awt.Image;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
@@ -28,7 +26,6 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableModel;
-
 import java.sql.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -48,6 +45,7 @@ public class Student extends JFrame {
 				try {
 					Student frame = new Student();
 					frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,14 +80,14 @@ public class Student extends JFrame {
 	private JTextField txtYL;
 	private JTextField txtSec;
 
-	Connection con = null;
-	PreparedStatement pst = null;
+	static Connection con = null;
+	static PreparedStatement pst = null;
 	PreparedStatement pst2 = null;
 	PreparedStatement pst3 = null;
 	PreparedStatement pst4 = null;
 	PreparedStatement pst5 = null;
-	ResultSet rs = null;
-	private JTable table;
+	static ResultSet rs = null;
+	private static JTable table;
 	private final JScrollPane scrollPane = new JScrollPane();
 
 	public void Student() {
@@ -111,7 +109,7 @@ public class Student extends JFrame {
 			RecordTable.setRowCount(0);
 
 			while (rs.next()) {
-				Vector columnData = new Vector();
+				Vector<String> columnData = new Vector<String>();
 
 				for (int i = 1; i <= q; i++) {
 					columnData.add(rs.getString("studentID"));
@@ -130,21 +128,7 @@ public class Student extends JFrame {
 			JOptionPane.showMessageDialog(null, ex);
 		}
 	}
-	
-	private void clearFields() {
-		txtStudIDReg.setText(null);
-		txtFN.setText(null);
-		txtMI.setText(null);
-		txtLN.setText(null);
-		txtSX.setText(null);
-		txtProg.setText(null);
-		txtDept.setText(null);
-		txtYL.setText(null);
-		txtSec.setText(null);
-		DefaultTableModel RecordTable = (DefaultTableModel)table.getModel();
-        RecordTable.setRowCount(0);
-	}
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -393,11 +377,7 @@ public class Student extends JFrame {
 
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", "");
 					pst = con.prepareStatement(sql);
-					
-					String selectSql = "SELECT * FROM student where studentID = '"+txtStudIDReg+"'";
-					rs = pst.executeQuery(selectSql);
 
-				if(rs.next()) {
 					String sql2 = "SELECT programDesc, programID FROM program;";
 					pst2 = con.prepareStatement(sql2);
 					ResultSet rs2 = pst2.executeQuery();
@@ -445,7 +425,6 @@ public class Student extends JFrame {
 						}
 						break;
 					}
-					
 
 					pst.setString(1, txtStudIDReg.getText());
 					pst.setString(2, program);
@@ -458,7 +437,9 @@ public class Student extends JFrame {
 					pst.setString(9, txtSX.getText());
 					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record inserted successfully!");
-				
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				txtStudIDReg.setText("");
 				txtFN.setText("");
 				txtLN.setText("");
@@ -471,15 +452,6 @@ public class Student extends JFrame {
 				txtStudID.requestFocus();
 				showTableData();
 			}
-			else
-			{
-				JOptionPane.showMessageDialog(null, "Student ID already exists");
-				clearFields(); //clear text fields
-			}
-			}catch (SQLException e1) {
-				e1.printStackTrace();
-		}
-	}
 		});
 		btnCreate.setBounds(1035, 16, 115, 31);
 		panel_1_1.add(btnCreate);
@@ -610,7 +582,8 @@ public class Student extends JFrame {
 				new Object[][] {
 				},
 				new String[] {
-						"Student ID", "Program", "Department", "Last Name", "First Name", "MI", "Suffix", "Year Level", "Section"
+						"Student ID", "Program", "Department", "Last Name", "First Name", "MI", "Suffix", "Year Level",
+						"Section"
 				}) {
 			Class[] columnTypes = new Class[] {
 					String.class, String.class, String.class, String.class, String.class, String.class, String.class,
