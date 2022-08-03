@@ -1,14 +1,12 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Image;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -18,9 +16,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
 
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class Ranking extends JFrame {
-	
-	private Image img_logo = new ImageIcon(Ranking.class.getResource("res/PUP.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH);
+
+	static Connection con = null;
+	static PreparedStatement pst = null;
+	static PreparedStatement pst2 = null;
+	ResultSet rs = null;
+	ResultSet rs2 = null;
+
+	private static JTable table;
+
+	private Image img_logo = new ImageIcon(Ranking.class.getResource("res/PUP.png")).getImage().getScaledInstance(65,
+			65, Image.SCALE_SMOOTH);
 
 	private JPanel contentPane;
 
@@ -33,11 +47,82 @@ public class Ranking extends JFrame {
 				try {
 					Ranking frame = new Ranking();
 					frame.setVisible(true);
+					showTableData();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+
+	public void Ranking() {
+		showTableData();
+		Ranking();
+	}
+
+	public static ArrayList listofStudents () throws SQLException {
+			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa FROM student, program, year, section, grade WHERE student.programID = program.programID AND student.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID;";
+			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", "");
+			pst = con.prepareStatement(sql);
+
+			ResultSet rs = pst.executeQuery();
+
+			String sql2 = "SELECT COUNT(*) AS recordCount FROM grade;";
+			pst2 = con.prepareStatement(sql2);
+			ResultSet rs2 = pst2.executeQuery();
+
+			ResultSetMetaData stData = (ResultSetMetaData) rs.getMetaData();
+
+			int q = stData.getColumnCount();
+
+			rs2.next();
+			int count = rs2.getInt("recordCount");
+
+			StudentGrade[] rankings = new StudentGrade[count];
+
+			ArrayList<StudentGrade> rankingList = new ArrayList<>();
+
+			while (rs.next()){
+				StudentGrade ranking = new StudentGrade(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8),rs.getFloat(9));
+				rankingList.add(ranking);
+			}
+
+			Collections.sort(rankingList, new Comparator<StudentGrade>() {
+				public int compare(StudentGrade sg1 , StudentGrade sg2){
+					return Float.valueOf(sg1.gwa).compareTo(sg2.gwa);
+				}
+			});
+			return rankingList;
+
+			/*for(int i = 0; i < rankingList.size(); i++){
+				System.out.println(rankingList.get(i).gwa); 
+			} */		  
+
+	}
+
+	public static void showTableData() {
+		try {
+
+			DefaultTableModel RecordTable = (DefaultTableModel) table.getModel();
+			RecordTable.setRowCount(0);
+
+			ArrayList<StudentGrade> list = listofStudents();
+			Object rowData[] = new Object[9];
+			for(int i = 0; i < list.size(); i++){
+				rowData[0]=list.get(i).studentID;
+				rowData[1]=list.get(i).programDesc;
+				rowData[2]=list.get(i).lastName;
+				rowData[3]=list.get(i).firstName;
+				rowData[4]=list.get(i).middleInitial;
+				rowData[5]=list.get(i).suffix;
+				rowData[6]=list.get(i).yearDesc;
+				rowData[7]=list.get(i).sectionDesc;
+				rowData[8]=list.get(i).gwa;
+				RecordTable.addRow(rowData);
+			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, ex);
+		}
 	}
 
 	/**
@@ -86,12 +171,38 @@ public class Ranking extends JFrame {
 		btnSort.setBackground(new Color(128, 0, 0));
 		btnSort.setBounds(540, 541, 139, 40);
 		panel.add(btnSort);
+	/* 	btnSort.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+	  
+				}
+			}
+		});*/
 		
 		JLabel lblIconLogo = new JLabel("");
 		lblIconLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIconLogo.setBounds(10, 0, 70, 70);
 		lblIconLogo.setIcon(new ImageIcon(img_logo));
 		contentPane.add(lblIconLogo);
+
+		table = new JTable();
+		scrollPane_1.setViewportView(table);
+		table.setEnabled(false);
+		table.setFont(new Font("Arial", Font.PLAIN, 14)); // Updated UI
+		table.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+						"Student ID", "Program", "Last Name", "First Name", "MI", "Suffix", "Year Level", "Section", "GWA"
+				}) {
+			Class[] columnTypes = new Class[] {
+					String.class, String.class, String.class, String.class, String.class, String.class, String.class,
+					String.class, Float.class
+			};
+
+			public Class getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		});
 		
 		JPanel paneHome = new JPanel();
 		paneHome.addMouseListener(new MouseAdapter() {
