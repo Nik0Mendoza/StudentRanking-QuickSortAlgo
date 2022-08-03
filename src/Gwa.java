@@ -1,6 +1,5 @@
 import java.awt.EventQueue;
 import java.awt.Image;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -54,7 +53,6 @@ public class Gwa extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-
 	private JPanel contentPane;
 	private JTextField txtStudID;
 	private JTextField txtGwa;
@@ -227,34 +225,33 @@ public class Gwa extends JFrame {
 					pst2 = con.prepareStatement(sql2);
 					ResultSet rs2 = pst2.executeQuery();
 					String year = txtYearLevel.getText();
+					int year2=0;
 					while (rs2.next()) {
 						if (year.equals(rs2.getString(1))) {
-							year = rs2.getString(2);
+							year2 = rs2.getInt(2);
 							break;
 						}
-						break;
 					}
 
-					String sql3 = "SELECT semID, semDesc FROM semester;";
+					String sql3 = "SELECT semDesc, semID  FROM semester;";
 					pst3 = con.prepareStatement(sql3);
 					ResultSet rs3 = pst3.executeQuery();
 					String semester = txtSem.getText();
+					int semester2 = 0;
 					while (rs3.next()) {
-						if (semester.equals(rs3.getString(2))) {
-							semester = rs3.getString(1);
+						if (semester.equals(rs3.getString(1))) {
+							semester2 = rs3.getInt(2);
 							break;
 						}
-						break;
 					}
 
 					String sql4 = "SELECT gwa FROM GRADE WHERE studentID = ?;";
 					pst4 = con.prepareStatement(sql4);
 					pst4.setString(1, txtStudID.getText());
 					ResultSet rs4 = pst4.executeQuery();
-					float gwa = 0;
+					double gwa = Double.parseDouble(txtGwa.getText());
 					int listerID = 0;
 					while (rs4.next()){
-						gwa = rs4.getFloat(1);
 						if (gwa >= 1 && gwa <= 1.50) {
 							listerID = 2;
 						} else if (gwa >= 1.51 && gwa <= 1.75) {
@@ -262,12 +259,13 @@ public class Gwa extends JFrame {
 						} else {
 							listerID = 1;
 						}
+						break;
 					}
 
 					pst.setString(1, txtStudID.getText());
-					pst.setString(2, year);
-					pst.setString(3, semester);
-					pst.setString(4, txtGwa.getText());
+					pst.setInt(2, year2);
+					pst.setInt(3, semester2);
+					pst.setDouble(4, gwa);
 					pst.setInt(5, listerID);
 					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record inserted successfully!");
@@ -302,36 +300,33 @@ public class Gwa extends JFrame {
 					pst2 = con.prepareStatement(sql2);
 					ResultSet rs2 = pst2.executeQuery();
 					String year = txtYearLevel.getText();
+					int year2=0;
 					while (rs2.next()) {
 						if (year.equals(rs2.getString(1))) {
-							year = rs2.getString(2);
+							year2 = rs2.getInt(2);
 							break;
 						}
-						break;
 					}
 
-					String sql3 = "SELECT semID, semDesc FROM semester;";
+					String sql3 = "SELECT semDesc, semID  FROM semester;";
 					pst3 = con.prepareStatement(sql3);
 					ResultSet rs3 = pst3.executeQuery();
 					String semester = txtSem.getText();
+					int semester2 = 0;
 					while (rs3.next()) {
-						if (semester.equals(rs3.getString(2))) {
-							semester = rs3.getString(1);
+						if (semester.equals(rs3.getString(1))) {
+							semester2 = rs3.getInt(2);
 							break;
 						}
-						break;
 					}
 
-					String sql4 = "SELECT gwa FROM GRADE WHERE studentID = ? AND yearID = ? and semID = ?;";
+					String sql4 = "SELECT gwa FROM GRADE WHERE studentID = ?;";
 					pst4 = con.prepareStatement(sql4);
 					pst4.setString(1, txtStudID.getText());
-					pst4.setString(2, txtYearLevel.getText());
-					pst4.setString(3, txtSem.getText());
 					ResultSet rs4 = pst4.executeQuery();
-					float gwa = 0;
+					double gwa = Double.parseDouble(txtGwa.getText());
 					int listerID = 0;
 					while (rs4.next()){
-						gwa = rs4.getFloat(1);
 						if (gwa >= 1 && gwa <= 1.50) {
 							listerID = 2;
 						} else if (gwa >= 1.51 && gwa <= 1.75) {
@@ -339,13 +334,14 @@ public class Gwa extends JFrame {
 						} else {
 							listerID = 1;
 						}
+						break;
 					}
-
-					pst.setString(1, txtGwa.getText());
+					
+					pst.setDouble(1, gwa);
 					pst.setInt(2, listerID);
 					pst.setString(3, txtStudID.getText());
-					pst.setString(4, year);
-					pst.setString(5, semester);
+					pst.setInt(4, year2);
+					pst.setInt(5, semester2);
 					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record updated successfully!");
 				} catch (SQLException e1) {
