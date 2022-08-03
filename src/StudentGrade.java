@@ -1,8 +1,8 @@
 public class StudentGrade {
 
-    String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, sectionDesc;
+    String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, sectionDesc, listerDesc;
     Double gwa;
-        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String sectionDesc, Double gwa) {
+        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String sectionDesc, Double gwa, String listerDesc) {
             this.studentID = studentID;
             this.programDesc = programDesc;
             this.lastName = lastName;
@@ -11,7 +11,8 @@ public class StudentGrade {
             this.suffix = suffix;
             this.yearDesc =yearDesc;
             this.sectionDesc=sectionDesc;
-            this.gwa =gwa;
+            this.gwa = gwa;
+            this.listerDesc = listerDesc;
         }
 
         public String getstudentID() {
@@ -50,9 +51,13 @@ public class StudentGrade {
             return this.gwa;
         }
 
+        public String getlisterDesc() {
+            return this.listerDesc;
+        }
+
        @Override
        public String toString() {
-            return (this.getstudentID()+this.getprogramDesc()+this.getlastName()+this.getfirstName()+this.getmiddleInitial()+this.getsuffix()+this.getyearDesc()+this.getsectionDesc()+this.getgwa());
+            return (this.getstudentID()+this.getprogramDesc()+this.getlastName()+this.getfirstName()+this.getmiddleInitial()+this.getsuffix()+this.getyearDesc()+this.getsectionDesc()+this.getgwa()+this.getlisterDesc());
        }
 
 }
