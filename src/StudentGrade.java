@@ -1,8 +1,8 @@
 public class StudentGrade {
 
     String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, sectionDesc;
-    float gwa;
-        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String sectionDesc, float gwa) {
+    Double gwa;
+        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String sectionDesc, Double gwa) {
             this.studentID = studentID;
             this.programDesc = programDesc;
             this.lastName = lastName;
@@ -46,7 +46,7 @@ public class StudentGrade {
             return this.sectionDesc;
         }
 
-        public float getgwa() {
+        public Double getgwa() {
             return this.gwa;
         }
 
