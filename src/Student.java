@@ -90,11 +90,6 @@ public class Student extends JFrame {
 	private static JTable table;
 	private final JScrollPane scrollPane = new JScrollPane();
 
-	public void Student() {
-		showTableData();
-		Student();
-	}
-
 	public void showTableData() {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", ""); // database name
