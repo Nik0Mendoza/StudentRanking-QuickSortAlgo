@@ -17,7 +17,7 @@ CREATE TABLE grade(
 	studentID VARCHAR (17) NOT NULL,
     yearID INT NOT NULL,
     semID INT NOT NULL,
-    gwa FLOAT,
+    gwa DOUBLE,
     listerID INT NOT NULL,
     PRIMARY KEY (studentID, yearID, semID, listerID)
 );
@@ -100,7 +100,8 @@ INSERT INTO student VALUES
 ('2020-06569-MN-0', 1, 1, 2, 5, 2, 'Dominic', 'Mendoza', 'A', ''),
 ('2020-05551-MN-0', 1, 1, 2, 5, 2, 'Joriz Ivann', 'Villanueva', 'F', ''),
 ('2020-07561-MN-0', 1, 1, 2, 5, 2, 'Baron David', 'Suzon', 'A', ''),
-('2020-04457-MN-0', 1, 1, 2, 5, 2, 'Maila Jane', 'Padilla', 'C', '');
+('2020-04457-MN-0', 1, 1, 2, 5, 2, 'Maila Jane', 'Padilla', 'C', ''),
+('2020-00007-MN-0', 1, 1, 2, 5, 2, 'Anna', 'Smith', 'F', '');
 
 INSERT INTO grade VALUES
 ('2020-01098-MN-0', 1, 2, 2.00, 1),
