@@ -1,7 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Image;
-
+import java.sql.*;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -83,6 +83,7 @@ public class Menu extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				Student frameStudent = new Student();
 				frameStudent.setVisible(true);
+				frameStudent.showTableData();
 				dispose();
 			}
 		});
@@ -110,6 +111,7 @@ public class Menu extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				Gwa frameGwa = new Gwa();
 				frameGwa.setVisible(true);
+				frameGwa.showTableData();
 				dispose();
 			}
 		});
@@ -119,7 +121,7 @@ public class Menu extends JFrame {
 		panel.add(paneGrades);
 		paneGrades.setLayout(null);
 		
-		JLabel lblNewLabel_1 = new JLabel("GWA");
+		JLabel lblNewLabel_1 = new JLabel("Grades");
 		lblNewLabel_1.setFont(new Font("Dialog", Font.BOLD, 25));
 		lblNewLabel_1.setBounds(80, 10, 157, 52);
 		paneGrades.add(lblNewLabel_1);
@@ -136,6 +138,7 @@ public class Menu extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				Ranking frameRanking = new Ranking();
 				frameRanking.setVisible(true);
+				frameRanking.showTableData();
 				dispose();
 			}
 		});
