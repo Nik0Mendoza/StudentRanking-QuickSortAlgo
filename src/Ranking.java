@@ -33,10 +33,12 @@ public class Ranking extends JFrame {
 	static PreparedStatement pst2 = null;
 	static PreparedStatement pst3 = null;
 	static PreparedStatement pst4 = null;
+	static PreparedStatement pst5 = null;
 	ResultSet rs = null;
 	ResultSet rs2 = null;
 	ResultSet rs3 = null;
 	ResultSet rs4 = null;
+	ResultSet rs5 = null;
 
 	private static JTable table;
 
@@ -46,6 +48,7 @@ public class Ranking extends JFrame {
 	private JPanel contentPane;
 	private static JTextField txtYearLevel;
 	private static JTextField txtSemester;
+	private static JTextField txtProgram;
 
 	/**
 	 * Launch the application.
@@ -64,7 +67,7 @@ public class Ranking extends JFrame {
 	}
 
 	public static ArrayList listofStudents() throws SQLException {
-		String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc,section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester,section, grade, lister WHERE student.programID = program.programID AND grade.yearID = year.yearID AND grade.semID = semester.semID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND grade.yearID = ? AND grade.semID=?;";
+		String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc,section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester,section, grade, lister WHERE student.programID = program.programID AND grade.yearID = year.yearID AND grade.semID = semester.semID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND grade.yearID = ? AND grade.semID=? AND student.programID = ?;";
 		con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", "");
 		pst = con.prepareStatement(sql);
 
@@ -92,8 +95,21 @@ public class Ranking extends JFrame {
 			}
 		}
 
+		String sql5 = "SELECT programDesc, programID  FROM program;";
+		pst5 = con.prepareStatement(sql5);
+		ResultSet rs5 = pst5.executeQuery();
+		String program = txtProgram.getText();
+		int program2 = 0;
+		while (rs5.next()) {
+			if (program.equals(rs5.getString(1))) {
+				program2 = rs5.getInt(2);
+				break;
+			}
+		}
+
 		pst.setInt(1, year2);
 		pst.setInt(2, semester2);
+		pst.setInt(3, program2);
 
 		ResultSet rs = pst.executeQuery();
 
@@ -224,29 +240,29 @@ public class Ranking extends JFrame {
 		btnPrint.setForeground(Color.WHITE);
 		btnPrint.setFont(new Font("Arial", Font.BOLD, 30));
 		btnPrint.setBackground(new Color(128, 0, 0));
-		btnPrint.setBounds(1011, 526, 139, 40);
+		btnPrint.setBounds(1045, 533, 127, 40);
 		panel.add(btnPrint);
 
 		txtYearLevel = new JTextField();
 		txtYearLevel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		txtYearLevel.setBounds(147, 526, 139, 44);
+		txtYearLevel.setBounds(406, 529, 139, 44);
 		panel.add(txtYearLevel);
 		txtYearLevel.setColumns(10);
 
 		JLabel lblYearLevel = new JLabel("Year Level:");
 		lblYearLevel.setFont(new Font("Tahoma", Font.PLAIN, 23));
-		lblYearLevel.setBounds(32, 520, 113, 55);
+		lblYearLevel.setBounds(291, 523, 113, 55);
 		panel.add(lblYearLevel);
 
 		JLabel lblSemester = new JLabel("Semester:");
 		lblSemester.setFont(new Font("Tahoma", Font.PLAIN, 23));
-		lblSemester.setBounds(313, 520, 113, 55);
+		lblSemester.setBounds(572, 523, 113, 55);
 		panel.add(lblSemester);
 
 		txtSemester = new JTextField();
 		txtSemester.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		txtSemester.setColumns(10);
-		txtSemester.setBounds(418, 526, 139, 44);
+		txtSemester.setBounds(677, 529, 139, 44);
 		panel.add(txtSemester);
 
 		JButton btnSort = new JButton("Sort");
@@ -258,8 +274,19 @@ public class Ranking extends JFrame {
 		btnSort.setForeground(Color.WHITE);
 		btnSort.setFont(new Font("Arial", Font.BOLD, 30));
 		btnSort.setBackground(new Color(128, 0, 0));
-		btnSort.setBounds(596, 526, 139, 40);
+		btnSort.setBounds(849, 533, 139, 40);
 		panel.add(btnSort);
+		
+		txtProgram = new JTextField();
+		txtProgram.setBounds(125, 531, 139, 44);
+		panel.add(txtProgram);
+		txtProgram.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		txtProgram.setColumns(10);
+		
+		JLabel lblProgram = new JLabel("Program:");
+		lblProgram.setBounds(29, 525, 113, 55);
+		panel.add(lblProgram);
+		lblProgram.setFont(new Font("Tahoma", Font.PLAIN, 23));
 
 		JPanel paneHome = new JPanel();
 		paneHome.addMouseListener(new MouseAdapter() {
