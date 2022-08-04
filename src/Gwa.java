@@ -71,7 +71,7 @@ public class Gwa extends JFrame {
 	public void showTableData() {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", ""); // database name
-			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester, grade, lister WHERE student.studentID = grade.studentID AND student.programID = program.programID AND student.yearID = year.yearID AND grade.semID = semester.semID AND grade.listerID = lister.listerID;";
+			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester, grade, lister WHERE student.studentID = grade.studentID AND student.programID = program.programID AND grade.yearID = year.yearID AND grade.semID = semester.semID AND grade.listerID = lister.listerID;";
 			pst = con.prepareStatement(sql);
 			//pst.setString(1, txtStudID2.getText());
 			rs = pst.executeQuery();
@@ -107,7 +107,7 @@ public class Gwa extends JFrame {
 	public void showTableData2() {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", ""); // database name
-			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester, grade, lister WHERE student.studentID = grade.studentID AND student.programID = program.programID AND student.yearID = year.yearID AND grade.semID = semester.semID AND grade.listerID = lister.listerID AND student.studentID = ?;";
+			String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester, grade, lister WHERE student.studentID = grade.studentID AND student.programID = program.programID AND grade.yearID = year.yearID AND grade.semID = semester.semID AND grade.listerID = lister.listerID AND student.studentID = ?;";
 			pst = con.prepareStatement(sql);
 			pst.setString(1, txtStudID2.getText());
 			rs = pst.executeQuery();
@@ -184,7 +184,7 @@ public class Gwa extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 					try {
-						String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, section, grade, lister WHERE student.programID = program.programID AND student.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND student.studentID = ?;";
+						String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, section, grade, lister WHERE student.programID = program.programID AND grade.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND student.studentID = ?;";
 						
 						con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 						pst = con.prepareStatement(sql);
@@ -215,7 +215,7 @@ public class Gwa extends JFrame {
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, section, grade, lister WHERE student.programID = program.programID AND student.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND student.studentID = ?;";
+					String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, section, grade, lister WHERE student.programID = program.programID AND grade.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND student.studentID = ?;";
 
 					con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank","root", "");
 					pst = con.prepareStatement(sql);
@@ -379,6 +379,7 @@ public class Gwa extends JFrame {
 							year2 = rs2.getInt(2);
 							break;
 						}
+						break;
 					}
 
 					String sql3 = "SELECT semDesc, semID  FROM semester;";
@@ -391,6 +392,7 @@ public class Gwa extends JFrame {
 							semester2 = rs3.getInt(2);
 							break;
 						}
+						break;
 					}
 
 					String sql4 = "SELECT gwa FROM GRADE WHERE studentID = ?;";
