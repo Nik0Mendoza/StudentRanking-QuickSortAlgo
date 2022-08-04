@@ -24,14 +24,19 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.swing.JTextField;
 
 public class Ranking extends JFrame {
 
 	static Connection con = null;
 	static PreparedStatement pst = null;
 	static PreparedStatement pst2 = null;
+	static PreparedStatement pst3 = null;
+	static PreparedStatement pst4 = null;
 	ResultSet rs = null;
 	ResultSet rs2 = null;
+	ResultSet rs3 = null;
+	ResultSet rs4 = null;
 
 	private static JTable table;
 
@@ -39,6 +44,8 @@ public class Ranking extends JFrame {
 			65, Image.SCALE_SMOOTH);
 
 	private JPanel contentPane;
+	private static JTextField txtYearLevel;
+	private static JTextField txtSemester;
 
 	/**
 	 * Launch the application.
@@ -56,36 +63,46 @@ public class Ranking extends JFrame {
 		});
 	}
 
-	public void Ranking() {
-		showTableData();
-		Ranking();
-	}
-
 	public static ArrayList listofStudents() throws SQLException {
-		String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, section.sectionDesc, grade.gwa FROM student, program, year, section, grade WHERE student.programID = program.programID AND student.yearID = year.yearID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID;";
+		String sql = "SELECT student.studentID, program.programDesc, student.lastName, student.firstName, student.middleInitial, student.suffix, year.yearDesc, semester.semDesc,section.sectionDesc, grade.gwa, lister.listerDesc FROM student, program, year, semester,section, grade, lister WHERE student.programID = program.programID AND grade.yearID = year.yearID AND grade.semID = semester.semID AND student.sectionID = section.sectionID AND student.studentID = grade.studentID AND grade.listerID = lister.listerID AND grade.yearID = ? AND grade.semID=?;";
 		con = DriverManager.getConnection("jdbc:mysql://localhost/studentrank", "root", "");
 		pst = con.prepareStatement(sql);
 
+		String sql3 = "SELECT yearDesc, yearID FROM year;";
+		pst3 = con.prepareStatement(sql3);
+		ResultSet rs3 = pst3.executeQuery();
+		String year = txtYearLevel.getText();
+		int year2 = 0;
+		while (rs3.next()) {
+			if (year.equals(rs3.getString(1))) {
+				year2 = rs3.getInt(2);
+				break;
+			}
+		}
+
+		String sql4 = "SELECT semDesc, semID  FROM semester;";
+		pst4 = con.prepareStatement(sql4);
+		ResultSet rs4 = pst4.executeQuery();
+		String semester = txtSemester.getText();
+		int semester2 = 0;
+		while (rs4.next()) {
+			if (semester.equals(rs4.getString(1))) {
+				semester2 = rs4.getInt(2);
+				break;
+			}
+		}
+
+		pst.setInt(1, year2);
+		pst.setInt(2, semester2);
+
 		ResultSet rs = pst.executeQuery();
-
-		String sql2 = "SELECT COUNT(*) AS recordCount FROM grade;";
-		pst2 = con.prepareStatement(sql2);
-		ResultSet rs2 = pst2.executeQuery();
-
-		ResultSetMetaData stData = (ResultSetMetaData) rs.getMetaData();
-
-		int q = stData.getColumnCount();
-
-		rs2.next();
-		int count = rs2.getInt("recordCount");
-
-		StudentGrade[] rankings = new StudentGrade[count];
 
 		ArrayList<StudentGrade> rankingList = new ArrayList<>();
 
 		while (rs.next()) {
 			StudentGrade ranking = new StudentGrade(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
-					rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDouble(9));
+					rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),
+					rs.getDouble(10), rs.getString(11));
 			rankingList.add(ranking);
 		}
 
@@ -104,7 +121,7 @@ public class Ranking extends JFrame {
 			RecordTable.setRowCount(0);
 
 			ArrayList<StudentGrade> list = listofStudents();
-			Object rowData[] = new Object[9];
+			Object rowData[] = new Object[11];
 			for (int i = 0; i < list.size(); i++) {
 				rowData[0] = list.get(i).studentID;
 				rowData[1] = list.get(i).programDesc;
@@ -113,8 +130,10 @@ public class Ranking extends JFrame {
 				rowData[4] = list.get(i).middleInitial;
 				rowData[5] = list.get(i).suffix;
 				rowData[6] = list.get(i).yearDesc;
-				rowData[7] = list.get(i).sectionDesc;
-				rowData[8] = list.get(i).gwa;
+				rowData[7] = list.get(i).semDesc;
+				rowData[8] = list.get(i).sectionDesc;
+				rowData[9] = list.get(i).gwa;
+				rowData[10] = list.get(i).listerDesc;
 				RecordTable.addRow(rowData);
 			}
 		} catch (Exception ex) {
@@ -155,7 +174,7 @@ public class Ranking extends JFrame {
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane_1.setBounds(10, 76, 1180, 458);
+		scrollPane_1.setBounds(10, 76, 1180, 426);
 		panel.add(scrollPane_1);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -176,12 +195,13 @@ public class Ranking extends JFrame {
 				new Object[][] {
 				},
 				new String[] {
-						"Student ID", "Program", "Last Name", "First Name", "MI", "Suffix", "Year Level", "Section",
-						"GWA"
+						"Student ID", "Program", "Last Name", "First Name", "MI", "Suffix", "Year Level", "Semester",
+						"Section",
+						"GWA", "Lister"
 				}) {
 			Class[] columnTypes = new Class[] {
 					String.class, String.class, String.class, String.class, String.class, String.class, String.class,
-					String.class, Double.class
+					String.class, String.class, Double.class, String.class
 			};
 
 			public Class getColumnClass(int columnIndex) {
@@ -204,8 +224,42 @@ public class Ranking extends JFrame {
 		btnPrint.setForeground(Color.WHITE);
 		btnPrint.setFont(new Font("Arial", Font.BOLD, 30));
 		btnPrint.setBackground(new Color(128, 0, 0));
-		btnPrint.setBounds(540, 541, 139, 40);
+		btnPrint.setBounds(1011, 526, 139, 40);
 		panel.add(btnPrint);
+
+		txtYearLevel = new JTextField();
+		txtYearLevel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		txtYearLevel.setBounds(147, 526, 139, 44);
+		panel.add(txtYearLevel);
+		txtYearLevel.setColumns(10);
+
+		JLabel lblYearLevel = new JLabel("Year Level:");
+		lblYearLevel.setFont(new Font("Tahoma", Font.PLAIN, 23));
+		lblYearLevel.setBounds(32, 520, 113, 55);
+		panel.add(lblYearLevel);
+
+		JLabel lblSemester = new JLabel("Semester:");
+		lblSemester.setFont(new Font("Tahoma", Font.PLAIN, 23));
+		lblSemester.setBounds(313, 520, 113, 55);
+		panel.add(lblSemester);
+
+		txtSemester = new JTextField();
+		txtSemester.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		txtSemester.setColumns(10);
+		txtSemester.setBounds(418, 526, 139, 44);
+		panel.add(txtSemester);
+
+		JButton btnSort = new JButton("Sort");
+		btnSort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showTableData();
+			}
+		});
+		btnSort.setForeground(Color.WHITE);
+		btnSort.setFont(new Font("Arial", Font.BOLD, 30));
+		btnSort.setBackground(new Color(128, 0, 0));
+		btnSort.setBounds(596, 526, 139, 40);
+		panel.add(btnSort);
 
 		JPanel paneHome = new JPanel();
 		paneHome.addMouseListener(new MouseAdapter() {
