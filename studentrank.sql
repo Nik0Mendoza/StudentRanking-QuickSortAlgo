@@ -3,7 +3,7 @@ USE studentrank;
 CREATE TABLE student(
 	studentID VARCHAR (17) NOT NULL PRIMARY KEY,
     programID INT NOT NULL,
-    deptID INT NOT NULL,
+    collegeID INT NOT NULL,
     yearID INT NOT NULL,
     sectionID INT NOT NULL,
     listerID INT,
@@ -27,14 +27,14 @@ CREATE TABLE lister(
     listerDesc VARCHAR(45)
 );
 
-CREATE TABLE department(
-	deptID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    deptDesc VARCHAR(45)
+CREATE TABLE college(
+	collegeID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    collegeDesc VARCHAR(45)
 );
 
 CREATE TABLE program(
 	programID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    deptID INT NOT NULL,
+    collegeID INT NOT NULL,
     programDesc VARCHAR(45)
 );
 
@@ -58,7 +58,7 @@ ALTER TABLE student
     ADD CONSTRAINT student_programID FOREIGN KEY (programID) REFERENCES program(programID),
     ADD CONSTRAINT student_yearID FOREIGN KEY (yearID) REFERENCES year(yearID),
     ADD CONSTRAINT student_sectionID FOREIGN KEY (sectionID) REFERENCES section(sectionID),
-	ADD CONSTRAINT student_deptID FOREIGN KEY (deptID) REFERENCES department(deptID);
+	ADD CONSTRAINT student_collegeID FOREIGN KEY (collegeID) REFERENCES college(collegeID);
 
 ALTER TABLE grade
     ADD CONSTRAINT grade_studentID FOREIGN KEY (studentID) REFERENCES student(studentID),
@@ -66,11 +66,36 @@ ALTER TABLE grade
     ADD CONSTRAINT grade_semID FOREIGN KEY (semID) REFERENCES semester(semID);
     
 ALTER TABLE program
-    ADD CONSTRAINT program_deptID FOREIGN KEY (deptID) REFERENCES department(deptID);
+    ADD CONSTRAINT program_collegeID FOREIGN KEY (collegeID) REFERENCES college(collegeID);
     
-INSERT INTO department VALUES (1, 'DCS');
+INSERT INTO college VALUES 
+(1, 'CCIS'),
+(2, 'OUS'),
+(3, 'CAF'),
+(4, 'CAFA'),
+(5, 'CAL'),
+(6, 'CBA'),
+(7, 'COC'),
+(8, 'COED'),
+(9, 'CE'),
+(10, 'CHK'),
+(11, 'CPSA'),
+(12, 'CSSD'),
+(13, 'CS'),
+(14, 'CTHTM');
     
-INSERT INTO program VALUES (1, 1, 'BSCS');
+INSERT INTO program VALUES 
+(1, 1, 'BSCS'),
+(2, 1, 'BSIT'),
+(3, 2, 'BSENTREP'),
+(4, 2, 'BABR'),
+(5, 2, 'BSBAHRM'),
+(6, 2, 'BSBAMM'),
+(7, 2, 'BSTM'),
+(8, 2, 'BPA'),
+(9, 3, 'BSA'),
+(10, 3, 'BSMA'),
+(11, 3, 'BSBAFM');
 
 INSERT INTO lister VALUES 
 (1, ''),
