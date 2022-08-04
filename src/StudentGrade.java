@@ -1,8 +1,8 @@
 public class StudentGrade {
 
-    String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, sectionDesc, listerDesc;
+    String studentID, programDesc, lastName, firstName, middleInitial,suffix, yearDesc, semDesc ,sectionDesc, listerDesc;
     Double gwa;
-        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String sectionDesc, Double gwa, String listerDesc) {
+        StudentGrade (String studentID, String programDesc, String lastName, String firstName, String middleInitial, String suffix, String yearDesc, String semDesc,String sectionDesc, Double gwa, String listerDesc) {
             this.studentID = studentID;
             this.programDesc = programDesc;
             this.lastName = lastName;
@@ -10,6 +10,7 @@ public class StudentGrade {
             this.middleInitial = middleInitial;
             this.suffix = suffix;
             this.yearDesc =yearDesc;
+            this.semDesc = semDesc;
             this.sectionDesc=sectionDesc;
             this.gwa = gwa;
             this.listerDesc = listerDesc;
@@ -43,6 +44,10 @@ public class StudentGrade {
             return this.yearDesc;
         }
 
+        public String getsemDesc() {
+            return this.semDesc;
+        }
+
         public String getsectionDesc() {
             return this.sectionDesc;
         }
@@ -57,7 +62,7 @@ public class StudentGrade {
 
        @Override
        public String toString() {
-            return (this.getstudentID()+this.getprogramDesc()+this.getlastName()+this.getfirstName()+this.getmiddleInitial()+this.getsuffix()+this.getyearDesc()+this.getsectionDesc()+this.getgwa()+this.getlisterDesc());
+            return (this.getstudentID()+this.getprogramDesc()+this.getlastName()+this.getfirstName()+this.getmiddleInitial()+this.getsuffix()+this.getyearDesc()+this.getsemDesc()+this.getsectionDesc()+this.getgwa()+this.getlisterDesc());
        }
 
 }
